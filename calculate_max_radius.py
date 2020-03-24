@@ -12,19 +12,31 @@ import scipy as sp
 
 from scipy import ndimage
 
+from bool_shooting_method import implement_bool_shooting_method
+
+class Max_radius:
+    def __init__(s, distance_map_im, input_im, output_im, save_paraview=False, voxel_size=1.e-6):
+        s.distance_map_im = distance_map_im
+        s.input_im = input_im
+        s.output_im = output_im
+        s.save_paraview = save_paraview
+        s.voxel_size = voxel_size
+        
+    def is_propagated(s, threshold):
+        mask = np.where(s.distance_map_im > threshold, 1, 0)
+        propagation = ndimage.binary_propagation(input=s.input_im, mask=mask).astype(np.int)
+        if s.save_paraview:
+            ps.io.to_vtk(mask, path=f'mask', divide=False, downsample=False, voxel_size=s.voxel_size, vox=False)
+            ps.io.to_vtk(propagation, path=f'propagation', divide=False, downsample=False, voxel_size=s.voxel_size, vox=False)
+        return bool(np.count_nonzero(propagation[np.nonzero(s.output_im)]))
+    
 
 voxel_size = float(np.loadtxt('voxel_size.txt'))
-image_distance_map = np.load('image_distance_map.npy')
-image_input_output = np.load('image_input_output.npy')
+distance_map_im = np.load('image_distance_map.npy')
+input_output_im = np.load('image_input_output.npy')
+input_im = np.where(input_output_im == 1, 1, 0)
+output_im = np.where(input_output_im == 2, 1, 0)
 
-threshold = 1.e-6
-image_threshold = np.where(image_distance_map > threshold, 1, 0)
-np.save('image_threshold', image_threshold) 
-ps.io.to_vtk(image_threshold, path=f'image_threshold', divide=False, downsample=False, voxel_size=voxel_size, vox=False)
+max_radius = Max_radius(distance_map_im, input_im, output_im, True, voxel_size)
 
-image_input = np.where(image_input_output == 1, 1, 0)
-image_output = np.where(image_input_output == 2, 1, 0)
-
-image_propagation = ndimage.binary_propagation(image_input, mask=image_threshold).astype(np.int)
-np.save('image_propagation', image_propagation) 
-ps.io.to_vtk(image_propagation, path=f'image_propagation', divide=False, downsample=False, voxel_size=voxel_size, vox=False)
+print('threshold, accuracy', implement_bool_shooting_method(max_radius.is_propagated, init_x=1.e-6, init_dx=1.e-6, min_dx=1.e-8))

@@ -16,12 +16,15 @@ blob = 0.5
 
 voxel_size = 1.e-6
 
-dims = [50, 50, 1]
+dims = [50, 50, 50]
 image_segmented = ps.generators.blobs(shape=dims, porosity=poro, blobiness=blob)
+ps.io.to_vtk(image_segmented, path=f'image_segmented', divide=False, downsample=False, voxel_size=voxel_size, vox=False)
 
 image_input_output = image_segmented * 0
 image_input_output[0, :, :] = 1
 image_input_output[dims[0] - 1, :, :] = 2
+image_input_output *= image_segmented
+ps.io.to_vtk(image_input_output, path=f'image_input_output', divide=False, downsample=False, voxel_size=voxel_size, vox=False)
 
 np.save('image_input_output', image_input_output) 
 np.save('image_segmented', image_segmented) 
@@ -30,6 +33,3 @@ np.savetxt('voxel_size.txt', [voxel_size])
 plt.imshow(image_segmented[:,:,0])
 plt.axis('off')
 plt.show()
-
-# exporing generated image to VTK format
-ps.io.to_vtk(image_segmented, path=f'image_segmented', divide=False, downsample=False, voxel_size=voxel_size, vox=False)
