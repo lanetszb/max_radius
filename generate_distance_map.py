@@ -26,4 +26,4 @@ plt.axis('off')
 plt.show()
 
 # exporing generated image to VTK format
-ps.io.to_vtk(image_distance_map, path=f'image_distance_map', divide=False, downsample=False, voxel_size=1E-6, vox=False)
+ps.io.to_vtk(image_distance_map, path=f'image_distance_map', divide=False, downsample=False, voxel_size=voxel_size, vox=False)
