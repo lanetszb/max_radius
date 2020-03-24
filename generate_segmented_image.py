@@ -10,26 +10,23 @@ import porespy as ps
 import matplotlib.pyplot as plt
 import scipy as sp
 
+
+voxel_size = 1.e-6
+np.savetxt('voxel_size.txt', [voxel_size])
         
 poro = 0.6
 blob = 0.5
-
-voxel_size = 1.e-6
-
 dims = [50, 50, 50]
-image_segmented = ps.generators.blobs(shape=dims, porosity=poro, blobiness=blob)
-ps.io.to_vtk(image_segmented, path=f'image_segmented', divide=False, downsample=False, voxel_size=voxel_size, vox=False)
+segmented_im = ps.generators.blobs(shape=dims, porosity=poro, blobiness=blob)
+np.save('segmented_im', segmented_im) 
+# ps.io.to_vtk(segmented_im, path=f'segmented_im', divide=False, downsample=False, voxel_size=voxel_size, vox=False)
 
-image_input_output = image_segmented * 0
-image_input_output[0, :, :] = 1
-image_input_output[dims[0] - 1, :, :] = 2
-image_input_output *= image_segmented
-ps.io.to_vtk(image_input_output, path=f'image_input_output', divide=False, downsample=False, voxel_size=voxel_size, vox=False)
+input_output_im = np.zeros_like(segmented_im, dtype=int)
+input_output_im[0, :, :] = segmented_im[0, :, :]
+input_output_im[dims[0] - 1, :, :] = segmented_im[dims[0] - 1, :, :] * 2
+np.save('input_output_im', input_output_im) 
+# ps.io.to_vtk(input_output_im, path=f'input_output_im', divide=False, downsample=False, voxel_size=voxel_size, vox=False)
 
-np.save('image_input_output', image_input_output) 
-np.save('image_segmented', image_segmented) 
-np.savetxt('voxel_size.txt', [voxel_size]) 
-
-plt.imshow(image_segmented[:,:,0])
-plt.axis('off')
-plt.show()
+# plt.imshow(segmented_im[:,:,0])
+# plt.axis('off')
+# plt.show()
