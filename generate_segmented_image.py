@@ -20,6 +20,7 @@ dims = [50, 50, 1]
 image_segmented = ps.generators.blobs(shape=dims, porosity=poro, blobiness=blob)
 
 np.save('image_segmented', image_segmented) 
+np.savetxt('voxel_size', [voxel_size]) 
 
 plt.imshow(image_segmented[:,:,0])
 plt.axis('off')
