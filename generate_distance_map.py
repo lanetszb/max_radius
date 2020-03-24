@@ -15,6 +15,10 @@ from scipy import ndimage
 
 image_distance_map = ndimage.distance_transform_edt(np.load('image_segmented.npy'))
 
+voxel_size = float(np.loadtxt('voxel_size.txt'))
+
+image_distance_map *= voxel_size
+
 np.save('image_distance_map', image_distance_map) 
 
 plt.imshow(image_distance_map[:,:,0])
