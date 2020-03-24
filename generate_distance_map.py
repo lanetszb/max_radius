@@ -10,20 +10,16 @@ import porespy as ps
 import matplotlib.pyplot as plt
 import scipy as sp
 
-        
-poro = 0.6
-blob = 0.5
+from scipy import ndimage
 
-voxel_size = 1.e-6
 
-dims = [50, 50, 1]
-image_segmented = ps.generators.blobs(shape=dims, porosity=poro, blobiness=blob)
+image_distance_map = ndimage.distance_transform_edt(np.load('image_segmented.npy'))
 
-np.save('image_segmented', image_segmented) 
+np.save('image_distance_map', image_distance_map) 
 
-plt.imshow(image_segmented[:,:,0])
+plt.imshow(image_distance_map[:,:,0])
 plt.axis('off')
 plt.show()
 
 # exporing generated image to VTK format
-ps.io.to_vtk(image_segmented, path=f'image_segmented', divide=False, downsample=False, voxel_size=1E-6, vox=False)
+ps.io.to_vtk(image_distance_map, path=f'image_distance_map', divide=False, downsample=False, voxel_size=1E-6, vox=False)
