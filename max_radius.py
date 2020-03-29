@@ -24,6 +24,7 @@ def bool_shooting_method(bool_function, init_x, init_dx, min_dx):
         x += dx
         y_prev = y_curr
         ind += 1
+        print('bool shooting ind: dx', ind, ': ', dx)
         y_curr = bool_function(x, ind)
         if y_curr != y_prev:
             dx /= -2.
@@ -34,7 +35,8 @@ def bool_shooting_method(bool_function, init_x, init_dx, min_dx):
 
 
 class Max_radius:
-    def __init__(s, distance_map_im, input_im, output_im, save_paraview=False, voxel_size=1.e-6):
+    def __init__(s, distance_map_im, input_im, output_im, save_paraview=False,
+                 voxel_size=1.e-6):
         s.distance_map_im = distance_map_im
         s.input_im = input_im
         s.output_im = output_im
@@ -43,11 +45,14 @@ class Max_radius:
 
     def is_propagated(s, threshold, ind=0):
         mask = np.where(s.distance_map_im > threshold, 1, 0)
-        propagation = ndimage.binary_propagation(input=s.input_im, mask=mask).astype(np.int)
+        propagation = ndimage.binary_propagation(input=s.input_im, mask=mask).astype(
+            np.int)
 
         if s.save_paraview:
-            ps.io.to_vtk(mask, path=f'mask_{ind}', divide=False, downsample=False, voxel_size=s.voxel_size, vox=False)
-            ps.io.to_vtk(propagation, path=f'propagation_{ind}', divide=False, downsample=False,
+            ps.io.to_vtk(mask, path=f'mask_{ind}', divide=False, downsample=False,
+                         voxel_size=s.voxel_size, vox=False)
+            ps.io.to_vtk(propagation, path=f'propagation_{ind}', divide=False,
+                         downsample=False,
                          voxel_size=s.voxel_size, vox=False)
 
         return bool(np.count_nonzero(propagation[np.nonzero(s.output_im)]))
