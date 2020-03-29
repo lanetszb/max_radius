@@ -8,7 +8,6 @@ sys.path.append(os.path.join(current_path, '../tmp/pmeal/porespy/'))
 
 import porespy as ps
 import matplotlib.pyplot as plt
-import scipy as sp
 
 voxel_size = 1.e-6
 np.savetxt('out/voxel_size.txt', [voxel_size])
