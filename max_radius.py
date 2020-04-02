@@ -9,6 +9,8 @@ sys.path.append(os.path.join(current_path, '../tmp/pmeal/porespy/'))
 import porespy as ps
 
 
+# Bool shooting method for critical radius calculation
+
 def bool_shooting_method(bool_function, init_x, init_dx, min_dx):
     ind = 0
     y_curr = bool_function(init_x, ind)
